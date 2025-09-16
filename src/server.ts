@@ -1,0 +1,16 @@
+import 'reflect-metadata';
+import { AppDataSource } from './data-source';
+import app from './app';
+
+const PORT = Number(process.env.PORT || 3000);
+
+AppDataSource.initialize()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`API running at http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('Error initializing DB:', err);
+    process.exit(1);
+  });
