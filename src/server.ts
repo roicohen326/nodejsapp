@@ -4,13 +4,16 @@ import app from './app';
 
 const PORT = process.env.PORT || 3000;
 
-AppDataSource.initialize()
-  .then(() => {
+const startServer = async () => {
+  try {
+    await AppDataSource.initialize();
     app.listen(PORT, () => {
       console.log(`API running at http://localhost:${PORT}`);
     });
-  })
-  .catch((err) => {
+  } catch (err) {
     console.error('Error initializing DB:', err);
     process.exit(1);
-  });
+  }
+};
+
+startServer();
