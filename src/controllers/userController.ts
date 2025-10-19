@@ -1,7 +1,7 @@
-// src/controllers/userController.ts
 import { Request, Response, NextFunction } from 'express';
 import { userService } from '../services/userService';
 import { HTTP_STATUS } from '../constants/httpStatus';
+import { BadRequestError } from '@map-colonies/error-types';
 
 export const userController = {
   getAllUsers: async (req: Request, res: Response, next: NextFunction) => {
@@ -16,9 +16,6 @@ export const userController = {
   getUserById: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const user = await userService.getById(parseInt(req.params.id));
-      if (!user) {
-        return res.status(HTTP_STATUS.NOT_FOUND).json({ error: 'User not found' });
-      }
       res.status(HTTP_STATUS.OK).json(user);
     } catch (e) {
       next(e);
@@ -39,7 +36,7 @@ export const userController = {
     try {
       const { email, name, hobbies } = req.body;
       if (!email || !name) {
-        return res.status(HTTP_STATUS.BAD_REQUEST).json({ error: 'email and name are required' });
+        throw new BadRequestError('Email and name are required fields');
       }
       const saved = await userService.create(email, name, hobbies || []);
       res.status(HTTP_STATUS.CREATED).json(saved);
@@ -51,6 +48,9 @@ export const userController = {
   updateUser: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { email, name, hobbies } = req.body;
+      if (!email || !name) {
+        throw new BadRequestError('Email and name are required fields');
+      }
       const updated = await userService.update(parseInt(req.params.id), email, name, hobbies);
       res.status(HTTP_STATUS.OK).json(updated);
     } catch (e) {

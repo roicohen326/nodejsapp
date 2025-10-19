@@ -1,7 +1,7 @@
-// src/services/userService.ts
 import { AppDataSource } from '../config/database';
 import { User } from '../entity/User';
-import { HTTP_STATUS } from '../constants/httpStatus';
+import { NotFoundError, ConflictError, BadRequestError } from '@map-colonies/error-types';
+import { EmailValidator } from '../validators/emailValidator';
 
 const userRepository = AppDataSource.getRepository(User);
 
@@ -10,8 +10,12 @@ export const userService = {
     return await userRepository.find();
   },
 
-  getById: async (id: number): Promise<User | null> => {
-    return await userRepository.findOne({ where: { id } });
+  getById: async (id: number): Promise<User> => {
+    const user = await userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundError(`User with id ${id} not found`);
+    }
+    return user;
   },
 
   getByHobby: async (hobbyName: string): Promise<User[]> => {
@@ -22,9 +26,15 @@ export const userService = {
   },
 
   create: async (email: string, name: string, hobbies: string[]): Promise<User> => {
+    try {
+      EmailValidator.validate(email);
+    } catch (error) {
+      throw new BadRequestError((error as Error).message);
+    }
+
     const existing = await userRepository.findOne({ where: { email } });
     if (existing) {
-      throw { status: HTTP_STATUS.CONFLICT, message: 'email already exists' };
+      throw new ConflictError(`User with email ${email} already exists`);
     }
 
     const user = userRepository.create({ email, name, hobbies });
@@ -32,9 +42,15 @@ export const userService = {
   },
 
   update: async (id: number, email: string, name: string, hobbies?: string[]): Promise<User> => {
+    try {
+      EmailValidator.validate(email);
+    } catch (error) {
+      throw new BadRequestError((error as Error).message);
+    }
+
     const user = await userRepository.findOne({ where: { id } });
     if (!user) {
-      throw { status: HTTP_STATUS.NOT_FOUND, message: 'User not found' };
+      throw new NotFoundError(`User with id ${id} not found`);
     }
 
     user.email = email;
@@ -48,7 +64,7 @@ export const userService = {
   delete: async (id: number): Promise<void> => {
     const result = await userRepository.delete(id);
     if (result.affected === 0) {
-      throw { status: HTTP_STATUS.NOT_FOUND, message: 'User not found' };
+      throw new NotFoundError(`User with id ${id} not found`);
     }
   }
 };
