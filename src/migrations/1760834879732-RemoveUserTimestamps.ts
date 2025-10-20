@@ -1,13 +1,33 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner, TableColumn } from "typeorm";
 
 export class RemoveUserTimestamps1700000000001 implements MigrationInterface {
+    name = 'RemoveUserTimestamps1700000000001'
+
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "created_at"`);
-        await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "updated_at"`);
+        await queryRunner.dropColumn("users", "created_at");
+        await queryRunner.dropColumn("users", "updated_at");
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`ALTER TABLE "users" ADD "created_at" TIMESTAMP NOT NULL DEFAULT now()`);
-        await queryRunner.query(`ALTER TABLE "users" ADD "updated_at" TIMESTAMP NOT NULL DEFAULT now()`);
+        await queryRunner.addColumn(
+            "users",
+            new TableColumn({
+                name: "created_at",
+                type: "timestamp",
+                default: "CURRENT_TIMESTAMP",
+                isNullable: false,
+            })
+        );
+        
+        await queryRunner.addColumn(
+            "users",
+            new TableColumn({
+                name: "updated_at",
+                type: "timestamp",
+                default: "CURRENT_TIMESTAMP",
+                onUpdate: "CURRENT_TIMESTAMP",
+                isNullable: false,
+            })
+        );
     }
 }
