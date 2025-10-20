@@ -9,7 +9,6 @@ export class User {
   name!: string;
 
   @Column({ unique: true })
-  @Index('IDX_USER_EMAIL')
   email!: string;
 
   @Column('simple-array', { default: '' })
