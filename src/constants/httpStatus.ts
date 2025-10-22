@@ -1,16 +1,14 @@
-export const HTTP_STATUS = {
-  OK: 200,
-  CREATED: 201,
-  NO_CONTENT: 204,
-  
-  BAD_REQUEST: 400,
-  UNAUTHORIZED: 401,
-  FORBIDDEN: 403,
-  NOT_FOUND: 404,
-  CONFLICT: 409,
-  
-  INTERNAL_SERVER_ERROR: 500,
-  SERVICE_UNAVAILABLE: 503,
-} as const;
+export {
+  OK,
+  CREATED,
+  NO_CONTENT,
+  BAD_REQUEST,
+  UNAUTHORIZED,
+  FORBIDDEN,
+  NOT_FOUND,
+  CONFLICT,
+  INTERNAL_SERVER_ERROR,
+  SERVICE_UNAVAILABLE,
+  type StatusCodes as HttpStatusCode
+} from 'http-status-codes';
 
-export type HttpStatusCode = typeof HTTP_STATUS[keyof typeof HTTP_STATUS];
