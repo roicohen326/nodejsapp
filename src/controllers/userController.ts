@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import { userService } from '../services/userService';
-import { HTTP_STATUS } from '../constants/httpStatus';
+import { OK, CREATED, NO_CONTENT } from '../constants/httpStatus';
 
 export const userController = {
   getAllUsers: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const users = await userService.getAll();
-      res.status(HTTP_STATUS.OK).json(users);
+      res.status(OK).json(users);
     } catch (e) {
       next(e);
     }
@@ -15,7 +15,7 @@ export const userController = {
   getUserById: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const user = await userService.getById(parseInt(req.params.id));
-      res.status(HTTP_STATUS.OK).json(user);
+      res.status(OK).json(user);
     } catch (e) {
       next(e);
     }
@@ -25,7 +25,7 @@ export const userController = {
     try {
       const { hobbyName } = req.params;
       const users = await userService.getByHobby(hobbyName);
-      res.status(HTTP_STATUS.OK).json(users);
+      res.status(OK).json(users);
     } catch (e) {
       next(e);
     }
@@ -35,7 +35,7 @@ export const userController = {
     try {
       const { email, name, hobbies } = req.body;
       const saved = await userService.create(email, name, hobbies || []);
-      res.status(HTTP_STATUS.CREATED).json(saved);
+      res.status(CREATED).json(saved);
     } catch (e) {
       next(e);
     }
@@ -45,7 +45,7 @@ export const userController = {
     try {
       const { email, name, hobbies } = req.body;
       const updated = await userService.update(parseInt(req.params.id), email, name, hobbies);
-      res.status(HTTP_STATUS.OK).json(updated);
+      res.status(OK).json(updated);
     } catch (e) {
       next(e);
     }
@@ -54,7 +54,7 @@ export const userController = {
   deleteUser: async (req: Request, res: Response, next: NextFunction) => {
     try {
       await userService.delete(parseInt(req.params.id));
-      res.status(HTTP_STATUS.NO_CONTENT).send();
+      res.status(NO_CONTENT).send();
     } catch (e) {
       next(e);
     }
