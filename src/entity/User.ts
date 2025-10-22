@@ -1,13 +1,16 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Index } from 'typeorm';
 
-@Entity()
+@Entity('users')
 export class User {
   @PrimaryGeneratedColumn()
   id!: number;
 
   @Column()
+  name!: string;
+
+  @Column({ unique: true })
   email!: string;
 
-  @Column()
-  name!: string;
+  @Column('simple-array', { default: '' })
+  hobbies!: string[];
 }

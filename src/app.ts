@@ -1,14 +1,13 @@
 import express from 'express';
-import usersRouter from './routes/users';
-import { errorHandler } from './middleware/errorHandler';
-
+import userRoutes from './routes/userRoutes';
+import { getErrorHandlerMiddleware } from '@map-colonies/error-express-handler';
 
 const app = express();
 
-app.use(express.json()); 
+app.use(express.json());
 
-app.use('/users', usersRouter);
+app.use('/users', userRoutes);
 
-app.use(errorHandler);  
+app.use(getErrorHandlerMiddleware());
 
 export default app;

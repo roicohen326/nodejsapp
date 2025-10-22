@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
-import { userService } from '../services/users';
+import { userService } from '../services/userService';
+import { OK, CREATED, NO_CONTENT } from '../constants/httpStatus';
 
 export const userController = {
   getAllUsers: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const users = await userService.getAll();
-      res.status(200).json(users);
+      res.status(OK).json(users);
     } catch (e) {
       next(e);
     }
@@ -14,10 +15,17 @@ export const userController = {
   getUserById: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const user = await userService.getById(parseInt(req.params.id));
-      if (!user) {
-        return res.status(404).json({ error: 'User not found' });
-      }
-      res.status(200).json(user);
+      res.status(OK).json(user);
+    } catch (e) {
+      next(e);
+    }
+  },
+
+  getUsersByHobby: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { hobbyName } = req.params;
+      const users = await userService.getByHobby(hobbyName);
+      res.status(OK).json(users);
     } catch (e) {
       next(e);
     }
@@ -25,12 +33,9 @@ export const userController = {
 
   createUser: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { email, name } = req.body;
-      if (!email || !name) {
-        return res.status(400).json({ error: 'email and name are required' });
-      }
-      const saved = await userService.create(email, name);
-      res.status(201).json(saved);
+      const { email, name, hobbies } = req.body;
+      const saved = await userService.create(email, name, hobbies || []);
+      res.status(CREATED).json(saved);
     } catch (e) {
       next(e);
     }
@@ -38,9 +43,9 @@ export const userController = {
 
   updateUser: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { email, name } = req.body;
-      const updated = await userService.update(parseInt(req.params.id), email, name);
-      res.status(200).json(updated);
+      const { email, name, hobbies } = req.body;
+      const updated = await userService.update(parseInt(req.params.id), email, name, hobbies);
+      res.status(OK).json(updated);
     } catch (e) {
       next(e);
     }
@@ -49,7 +54,7 @@ export const userController = {
   deleteUser: async (req: Request, res: Response, next: NextFunction) => {
     try {
       await userService.delete(parseInt(req.params.id));
-      res.status(204).send();
+      res.status(NO_CONTENT).send();
     } catch (e) {
       next(e);
     }
