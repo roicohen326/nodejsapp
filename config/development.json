@@ -1,0 +1,13 @@
+{
+  "server": {
+    "port": 3000
+  },
+  "database": {
+    "synchronize": false,
+    "logging": true
+  },
+  "logger": {
+    "level": "debug",
+    "prettyPrint": true
+  }
+}

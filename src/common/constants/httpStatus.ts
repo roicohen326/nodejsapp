@@ -11,4 +11,3 @@ export {
   SERVICE_UNAVAILABLE,
   type StatusCodes as HttpStatusCode
 } from 'http-status-codes';
-

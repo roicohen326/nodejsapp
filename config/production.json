@@ -1,0 +1,13 @@
+{
+  "server": {
+    "port": 8080
+  },
+  "database": {
+    "synchronize": false,
+    "logging": false
+  },
+  "logger": {
+    "level": "error",
+    "prettyPrint": false
+  }
+}

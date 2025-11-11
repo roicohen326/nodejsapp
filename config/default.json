@@ -1,0 +1,20 @@
+{
+  "server": {
+    "port": 3000,
+    "host": "localhost"
+  },
+  "database": {
+    "type": "postgres",
+    "host": "localhost",
+    "port": 5432,
+    "username": "postgres",
+    "password": "password",
+    "database": "roicohen",
+    "synchronize": false,
+    "logging": true
+  },
+  "logger": {
+    "level": "info",
+    "prettyPrint": true
+  }
+}

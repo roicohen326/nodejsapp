@@ -1,17 +1,24 @@
 import { Request, Response, NextFunction } from 'express';
+import { container } from 'tsyringe';
+import { Logger } from '@map-colonies/js-logger';
+import { SERVICES } from '../common/constants/services';
 
-export const requestLogger = (req: Request, res: Response, next: NextFunction) => {
-  const timestamp = new Date().toISOString();
-  const method = req.method;
-  const url = req.originalUrl;
-  const body = req.body;
+export function requestLogger(req: Request, res: Response, next: NextFunction): void {
+  const logger = container.resolve<Logger>(SERVICES.LOGGER);
+  
+  const startTime = Date.now();
 
-  console.log('--- Request Log ---');
-  console.log(`Timestamp: ${timestamp}`);
-  console.log(`Method: ${method}`);
-  console.log(`URL: ${url}`);
-  console.log(`Body:`, body);
-  console.log('------------------');
+  res.on('finish', () => {
+    const duration = Date.now() - startTime;
+    
+    logger.info({
+      method: req.method,
+      path: req.path,
+      statusCode: res.statusCode,
+      duration: `${duration}ms`,
+      ip: req.ip
+    }, 'HTTP Request completed');
+  });
 
   next();
-};
+}
